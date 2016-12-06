@@ -1,0 +1,146 @@
+\documentclass[a4paper,11pt]{article}
+
+%Package utilisé
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{verbatim}
+
+
+\begin{document}
+
+%Page de garde
+\begin{titlepage}
+    \vspace{-20px}
+    \begin{tabular}{l}
+	\textsc{Bannier} K\'evin
+        \textsc{Loiseau} Anne-Claire
+    \end{tabular}
+    \hfill \vspace{10px}\includegraphics[scale=0.1]{./esir.png}\\
+    \vfill
+    \begin{center}
+        \Huge{\'Ecole sup\'erieure d'ing\'enieurs de Rennes}\\
+        \vspace{1cm}
+        \LARGE{3\`eme Ann\'ee}\\
+        \large{Parcours IN}\\
+        \vspace{0.5cm}\hrule\vspace{0.5cm}
+        \LARGE{\textbf{Compte-rendu du TP n°6 d'Imagerie M\'edicale}}\\
+        \Large{Robotique m\'edicale : Asservissement visuel d'ultrason}
+        \vspace{0.5cm}\hrule
+        \vfill
+        \vfill
+    \end{center}
+    \begin{flushleft}
+        \Large{Sous l'encadrement de~:}\\
+        \vspace{0.2cm}
+        \large{{Alexandre} Krupa}
+    \end{flushleft}
+    \vfill
+\end{titlepage}
+
+
+
+\section{Objectif du TP}
+
+L'objectif de ce TP est de simuler le positionnement automatique d'une sonde \'echographique 2D par un robot. Cela est possible en r\'ealisant un asservisemment visuel des informations denses observ\'ees dans l'image rendue par la sonde ultrasonore, et en analysant les mouvements du patient (tel que la respiration) dans le but de les compenser automatiquement.
+Pour r\'ealiser cela nous allons utiliser un simulateur de sonde ultrasonore poss\'edant 6 degr\'es de libert\'e, développ\'e par l'\'equipe Lagadic de l'INRIA. Pour arriver \`a r\'ealiser un positionnement automatique, nous allons suivre plusieurs \'etapes divis\'ees en 13 questions, et qui suivent le d\'eroulement du cours. Nous allons donc, dans ce rapport, d\'etailler ce que nous avons réalis\'e \`a chacune de ces questions.
+
+
+\section{Travail r\'ealis\'e}
+Avant de d\'emarrer la r\'edaction du code et les r\'eponses aux questions, nous avons lanc\'es l'outil de simulation r\'ealis\'e par l'\'equipe de l'INRIA. Cet outil ouvre plusieus fen\^etres qui sont les suivantes :
+\begin{itemize}
+\item L'image actualis\'e de l'ultrason. Rien n'est encore cod\'e, cette image reste donc immobile.
+\item L'image d\'esir\'e. Cette image n'est pas cens\'e bouger par la suite, elle montre la zone d'int\'er\^et s\'el\'ectionn\'e.
+\item L'image diff\'erence entre les deux pr\'ec\'edentes. Pour le moment cela renvoit une image grise car elles sont identiques.
+\item Courbe de ... %TODO
+\item Courbe de ... %TODO
+\item Courbe de ... %TODO
+\end{itemize}
+
+\subsection{Question 1}
+Dans cette partie, nous allons appliquer les 6 degr\'es de libert\'e de la sonde, dans le but de simuler les mouvements du patient. Voici le code qui nous permet de r\'ealiser cela :
+\begin{verbatim}
+%TODO Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code si nécessaire
+Le r\'esultat que nous obtenons s'applique directement sur l'image actualis\'e de l'ultrason, ce qui modifie \'egalement l'image de diff\'erence, et la courbe d'erreur de pose de la sonde. Voici ce que nous observons :
+\begin{figure}[h]
+	\centering
+		%TODO Mettre le chemin vers l'image \includegraphics[width=250px]{./images/screen1.png}
+	\caption{Observation des mouvements simul\'e du patient}
+	\label{mvtPatient}
+\end{figure}
+
+La Figure \ref{mvtPatient} montre l'\'etat du patient \`a un instant t. En effet, les mouvements sont continues, ce que nous montre bien la courbe. Nous observons sur cette Figure \ref{mvtPatient} une diff\'erence assez \'elev\'e entre l'image actuel du mouvement du patient, et l'image d\'esir\'ee, soit celle initiale. Cela est normal, car aucune compensation automatique n'est r\'ealis\'e pour le moment, il y a seulement le battement de coeur qui est simul\'e. Ce battement de coeur simul\'e par ailleurs n'est pas vraiment r\'ealiste car sa mani\'ere de bouger est r\'ealis\'e par des sinus, ce qui donne un r\'esultat tr\`es peu r\'ealiste. De plus nous obtenons une erreur identique entre la rotation et la translation, mais cela est normal puisque rien n'est compens\'e ou m\^eme appris.
+Dans cette simulation, la zone d'int\'er\^et a peu d'importance puisque nous l'avons dit, aucun mouvement n'est actuellement compens\'e en fonction de cette zone, seulement la simualtion des battements du coeur est effectu\'e.
+
+\subsection{Question 2}
+%TODO Expliquer le but de la question
+\begin{verbatim}
+%Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code si nécessaire
+
+\subsection{Question 3}
+%TODO Expliquer le but de la question
+\begin{verbatim}
+%Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code si nécessaire
+
+\subsection{Question 4}
+%TODO Expliquer le but de la question
+\begin{verbatim}
+%Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code si nécessaire
+
+\subsection{Question 5}
+%TODO Expliquer le but de la question
+\begin{verbatim}
+%Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code si nécessaire
+
+\subsection{Question 6}
+%TODO Expliquer le but de la question
+\begin{verbatim}
+%Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code si nécessaire
+
+\subsection{Question 7}
+%TODO Expliquer le but de la question
+\begin{verbatim}
+%Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code si nécessaire
+
+\subsection{Question 8}
+%TODO
+
+\subsection{Question 9}
+%TODO
+
+\subsection{Question 10}
+%TODO
+
+\subsection{Question 11}
+%TODO
+
+\subsection{Question 12}
+%TODO Expliquer le but de la question
+\begin{verbatim}
+%Mettre le code ici
+\end{verbatim}
+%TODO Commenter le code 
+
+\subsection{Question 13}
+%TODO
+
+\section{Conclusion}
+%TODO
