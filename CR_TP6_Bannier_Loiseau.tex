@@ -56,21 +56,31 @@ Avant de d\'emarrer la r\'edaction du code et les r\'eponses aux questions, nous
 \item L'image actualis\'e de l'ultrason. Rien n'est encore cod\'e, cette image reste donc immobile.
 \item L'image d\'esir\'e. Cette image n'est pas cens\'e bouger par la suite, elle montre la zone d'int\'er\^et s\'el\'ectionn\'e.
 \item L'image diff\'erence entre les deux pr\'ec\'edentes. Pour le moment cela renvoit une image grise car elles sont identiques.
-\item Courbe de ... %TODO
-\item Courbe de ... %TODO
-\item Courbe de ... %TODO
+\item Courbe de vitesse de d\'eplacement de la sonde (translation et rotation)
+\item Courbe d'erreur de position de la sonde (translation et rotation
+\item Courbe d'erreur de la fonction de co\^ut
 \end{itemize}
 
 \subsection{Question 1}
 Dans cette partie, nous allons appliquer les 6 degr\'es de libert\'e de la sonde, dans le but de simuler les mouvements du patient. Voici le code qui nous permet de r\'ealiser cela :
 \begin{verbatim}
-%TODO Mettre le code ici
+double ampliture_t = 0.020;
+double ampliture_r = 20.0;
+
+object_velocity[0] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
+object_velocity[1] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
+object_velocity[2] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
+
+object_velocity[3] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
+object_velocity[4] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
+object_velocity[5] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
 \end{verbatim}
+
 %TODO Commenter le code si nécessaire
 Le r\'esultat que nous obtenons s'applique directement sur l'image actualis\'e de l'ultrason, ce qui modifie \'egalement l'image de diff\'erence, et la courbe d'erreur de pose de la sonde. Voici ce que nous observons :
 \begin{figure}[h]
 	\centering
-		%TODO Mettre le chemin vers l'image \includegraphics[width=250px]{./images/screen1.png}
+		\includegraphics[width=250px]{./images/question1.png}
 	\caption{Observation des mouvements simul\'e du patient}
 	\label{mvtPatient}
 \end{figure}
