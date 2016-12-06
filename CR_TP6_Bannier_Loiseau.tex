@@ -11,6 +11,7 @@
 \usepackage{verbatim}
 \usepackage{xcolor}
 \usepackage{gensymb}
+\usepackage{float}
 
 \begin{document}
 
@@ -244,29 +245,32 @@ cost = VisualFeatureError.euclideanNorm() / nbPx;
 %TODO Commenter le code 
 
 \subsection{Question 8}
-%TODO
-\begin{center}
-    \makebox[\textwidth]{\includegraphics[width=1.0\textwidth]{./images/q8.png}}
-\end{center}
+Avec un lambda = 0.4, l'asservissement visuel fonctionne. A chaque instant (it\'eration de la boucle), la cam\'era se re-positionne pour suivre le mouvement de l'objet. L'erreur ne d\'epasse jamais 0.02, ce qui est tr\`es performant (Figure \ref{assertVisu}). Cela se voit dans la fen\^etre 'Image Difference' : les erreurs sont tr\`es faibles et \`a peine visibles. L'erreur (affich\'ee en bas \`a droite de la Figure \ref{assertVisu}) varie en fonction des oscillations de l'objet. Plus le mouvement est rapide, plus l'erreur augmente.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{./images/q8.png}
+    \caption{Asservissement visuel}
+    \label{assertVisu}
+\end{figure}
 
 
 \subsection{Question 9}
 %TODO
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{./images/q9_large.png}
     \caption{Asservissement avec un grand ROI}
     \label{largeRoi}
 \end{figure}
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{./images/q9_medium.png}
     \caption{Asservissement avec un ROI moyen}
     \label{mediumRoi}
 \end{figure}
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{./images/q9_small.png}
     \caption{Asservissement avec un petit ROI}
@@ -275,23 +279,28 @@ cost = VisualFeatureError.euclideanNorm() / nbPx;
 
 \subsection{Question 10}
 %TODO
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=1.0\textwidth]{./images/q10_big.png}
-    \caption{Asservissement avec un petit ROI}
-    \label{smallRoi}
-\end{figure}
-
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{./images/q10_small.png}
-    \caption{Asservissement avec un petit ROI}
-    \label{smallRoi}
+    \caption{Asservissement avec un petit gain (lambda=0.1)}
+    \label{smallGain}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{./images/q10_big.png}
+    \caption{Asservissement avec un petit gain (lambda=0.8)}
+    \label{bigGain}
 \end{figure}
 
 \subsection{Question 11}
 %TODO
-% \begin{center}\makebox[\textwidth]{\includegraphics[width=1.0\textwidth]{./images/q11_0.4.png}}\end{center}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{./images/q11_0,4.png}
+    \caption{Asservissement avec mouvement rapide }
+    \label{fastMove}
+\end{figure}
 
 \subsection{Question 12}
 %TODO Expliquer le but de la question
