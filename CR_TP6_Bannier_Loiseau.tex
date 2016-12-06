@@ -10,6 +10,7 @@
 \usepackage{listings}
 \usepackage{verbatim}
 \usepackage{xcolor}
+\usepackage{gensymb}
 
 \begin{document}
 
@@ -21,7 +22,7 @@
 	\textsc{Bannier} K\'evin
         \textsc{Loiseau} Anne-Claire
     \end{tabular}
-    \hfill \vspace{10px}\includegraphics[scale=0.1]{./esir.png}\\
+    \hfill \vspace{10px}\includegraphics[scale=0.1]{./images/esir.png}\\
     \vfill
     \begin{center}
         \Huge{\'Ecole sup\'erieure d'ing\'enieurs de Rennes}\\
@@ -29,7 +30,7 @@
         \LARGE{3\`eme Ann\'ee}\\
         \large{Parcours IN}\\
         \vspace{0.5cm}\hrule\vspace{0.5cm}
-        \LARGE{\textbf{Compte-rendu du TP n°6 d'Imagerie M\'edicale}}\\
+        \LARGE{\textbf{Compte-rendu du TP n\degree 6 d'Imagerie M\'edicale}}\\
         \Large{Robotique m\'edicale : Asservissement visuel d'ultrason}
         \vspace{0.5cm}\hrule
         \vfill
@@ -57,21 +58,32 @@ Avant de d\'emarrer la r\'edaction du code et les r\'eponses aux questions, nous
 \item L'image actualis\'e de l'ultrason. Rien n'est encore cod\'e, cette image reste donc immobile.
 \item L'image d\'esir\'e. Cette image n'est pas cens\'e bouger par la suite, elle montre la zone d'int\'er\^et s\'el\'ectionn\'e.
 \item L'image diff\'erence entre les deux pr\'ec\'edentes. Pour le moment cela renvoit une image grise car elles sont identiques.
-\item Courbe de ... %TODO
-\item Courbe de ... %TODO
-\item Courbe de ... %TODO
+\item Courbe de vitesse de d\'eplacement de la sonde (translation et rotation)
+\item Courbe d'erreur de position de la sonde (translation et rotation
+\item Courbe d'erreur de la fonction de co\^ut
 \end{itemize}
 
 \subsection{Question 1}
 Dans cette partie, nous allons appliquer les 6 degr\'es de libert\'e de la sonde, dans le but de simuler les mouvements du patient. Voici le code qui nous permet de r\'ealiser cela :
 \begin{verbatim}
-%TODO Mettre le code ici
+double ampliture_t = 0.020;
+double ampliture_r = 20.0;
+
+object_velocity[0] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
+object_velocity[1] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
+object_velocity[2] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
+
+object_velocity[3] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
+object_velocity[4] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
+object_velocity[5] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
 \end{verbatim}
+
 %TODO Commenter le code si nécessaire
+
 Le r\'esultat que nous obtenons s'applique directement sur l'image actualis\'e de l'ultrason, ce qui modifie \'egalement l'image de diff\'erence, et la courbe d'erreur de pose de la sonde. Voici ce que nous observons :
-\begin{figure}[h]
+\begin{figure}
 	\centering
-		%TODO Mettre le chemin vers l'image \includegraphics[width=250px]{./images/screen1.png}
+		\includegraphics[width=500px]{./images/question1.png}
 	\caption{Observation des mouvements simul\'e du patient}
 	\label{mvtPatient}
 \end{figure}
@@ -82,44 +94,123 @@ Dans cette simulation, la zone d'int\'er\^et a peu d'importance puisque nous l'a
 \subsection{Question 2}
 %TODO Expliquer le but de la question
 \begin{verbatim}
-%Mettre le code ici
+for(int i=0; i<ROI_height; i++) {
+	for(int j=0; j<ROI_width; j++) {
+		DesiredFeatures[i*ROI_width+j] = simulator->Image(i+Hmin, j+Wmin);
+}
 \end{verbatim}
 %TODO Commenter le code si nécessaire
 
 \subsection{Question 3}
 %TODO Expliquer le but de la question
 \begin{verbatim}
-%Mettre le code ici
+vpMatrix patchX(3,3);
+patchX[0][0] = -1;  patchX[1][0] = -2;  patchX[2][0] = -1;
+patchX[0][1] = 0;   patchX[1][1] = 0;   patchX[2][1] = 0;
+patchX[0][2] = 1;   patchX[1][2] = 2;   patchX[2][2] = 1;
+
+vpMatrix patchY = patchX.transpose();
+
+vpMatrix patchZ(3,3);
+patchZ[0][0] = 1;  patchZ[1][0] = 2;  patchZ[2][0] = 1;
+patchZ[0][1] = 2;   patchZ[1][1] = 4;   patchZ[2][1] = 2;
+patchZ[0][2] = 1;   patchZ[1][2] = 2;   patchZ[2][2] = 1;
+
+for(int i=Hmin; i<Hmax; i++) {
+	for(int j=Wmin; j<Wmax; j++) {
+    	double img0Fx = ApplyPatch(2*patchX, img0, i, j);
+    	double img0Fy = ApplyPatch(2*patchY, img0, i, j);
+    	double img0Fz = 0;
+
+    	double imgaFx = ApplyPatch(patchX, imga, i, j);
+    	double imgaFy = ApplyPatch(patchY, imga, i, j);
+    	double imgaFz = ApplyPatch(-patchZ, imga, i, j);
+	
+    	double imgbFx = ApplyPatch(patchX, imgb, i, j);
+    	double imgbFy = ApplyPatch(patchY, imgb, i, j);
+    	double imgbFz = ApplyPatch(patchZ, imgb, i, j);
+
+        dIdx[i][j] = img0Fx + imgaFx +  imgbFx;
+        dIdy[i][j] = img0Fy + imgaFy +  imgbFy;
+        dIdz[i][j] = img0Fz + imgaFz +  imgbFz;
+    }
+}
 \end{verbatim}
-%TODO Commenter le code si n\'ecessaire
+
+%TODO : Commenter l'utilisation d'une nouvelle fonction ApplyPatch
+
+\begin{verbatim}
+/**
+ * @brief usImageGradient::ApplyPatch This method apply a patch to a point (i, j) in a image img
+ * @param patch : the patch to apply (ex : a 3x3 image)
+ * @param img : the original image
+ * @param i : coordonate i of the point
+ * @param j : coordonate j of the point
+ * @return the result of the patch applying to this point
+ */
+double usImageGradient::ApplyPatch(const vpMatrix &patch, vpImage<unsigned char> &img, int & i, int & j)
+{
+    double result = 0;
+
+    for(int iPatch = -(int)(patch.getRows()/2); iPatch <= (int)patch.getRows()/2; iPatch++) {
+        for(int jPatch = -(int)(patch.getCols()/2); jPatch <= (int)patch.getCols()/2; jPatch++) {
+            result += patch[iPatch+patch.getRows()/2][jPatch+patch.getCols()/2] * img[i+iPatch][j+jPatch];
+        }
+    }
+    return result;
+}
+\end{verbatim}
+%TODO Commenter le code si nécessaire
 
 \subsection{Question 4}
 %TODO Expliquer le but de la question
 \begin{verbatim}
-%Mettre le code ici
+int k=0;
+for(int i=0;i<ROIH; i++) {
+	for(int j=0; j<ROIW; j++) {
+		Ls[k][0] = dIdx[Hmin + i ][ Wmin + j];
+        Ls[k][1] = dIdy[Hmin + i ][ Wmin + j];
+        Ls[k][2] = dIdz[Hmin + i ][ Wmin + j];
+
+        double x = sx*((Wmin + j)-(imgW/2));
+        double y = sy*((Hmin + i)-(imgH/2));
+
+        Ls[k][3] = y*Ls[k][2];
+        Ls[k][4] = -x*Ls[k][2];
+        Ls[k][5] = x*Ls[k][1] - y*Ls[k][0];
+        k++;
+	}
+}
 \end{verbatim}
-%TODO Commenter le code si n\'ecessaire
+%TODO Commenter le code si nécessaire
 
 \subsection{Question 5}
 %TODO Expliquer le but de la question
 \begin{verbatim}
-%Mettre le code ici
+for(int i=0; i<ROI_height; i++) {
+	for(int j=0; j<ROI_width; j++) {
+		CurrentFeatures[i*ROI_width+j] = simulator->Image(i+Hmin, j+Wmin);
+	}
+}
 \end{verbatim}
-%TODO Commenter le code si n\'ecessaire
+%TODO Commenter le code si nécessaire
 
 \subsection{Question 6}
 %TODO Expliquer le but de la question
 \begin{verbatim}
-%Mettre le code ici
+double lambda = 0.1;
+vpColVector VisualFeatureError;
+VisualFeatureError = CurrentFeatures - DesiredFeatures; // Compute the visual feature error
+probe_velocity = -lambda*Ls.pseudoInverse()*VisualFeatureError; // Compute the probe velocity
 \end{verbatim}
-%TODO Commenter le code si n\'ecessaire
+%TODO Commenter le code si nécessaire
 
 \subsection{Question 7}
 %TODO Expliquer le but de la question
 \begin{verbatim}
-%Mettre le code ici
+cost = VisualFeatureError.euclideanNorm() / nbPx;
 \end{verbatim}
-%TODO Commenter le code si n\'ecessaire
+%TODO Commenter le code si nécessaire
 
 \subsection{Question 8}
 %TODO
@@ -185,3 +276,5 @@ Dans cette simulation, la zone d'int\'er\^et a peu d'importance puisque nous l'a
 %TODO
 
 \end{document}
+\grid
+\grid
