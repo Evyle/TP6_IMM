@@ -279,17 +279,18 @@ Dans la m\^eme lign\'ee, l'erreur devient tr\`es forte lorsque le ROI est tr\`es
 \end{figure}
 
 \subsection{Question 10}
-%TODO
+Lorsque le gain de contr\^ole est trop petit (lambda = 0.1), la cam\'era n'arrive \`a poursuivre l'objet en mouvement. Sa vitesse est trop faible par rapport au mouvement. L'erreur est donc \'elev\'ee en bout de l'oscillation, mais le re-postionnement est correct lorsque l'objet revient vers sa postion initiale (Figure \ref{smallGain}).
+\par
+A l'inverse, d\'efinir un gain de controle trop \'elev\'e entraine des vibrations : la cam\'era avance trop vite et se positionne incorrectement. R\'eguli\`erement, la cam\'era d\'epasse l'objet et est oblig\'ee de revenir sur ses pas. Cela provoque d'importants aller-retours visibles sur la figure \ref{bigGain}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{./images/q10_small.png}
+    \includegraphics[width=0.5\textheight]{./images/q10_small.png}
     \caption{Asservissement avec un petit gain (lambda=0.1)}
     \label{smallGain}
 \end{figure}
-
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{./images/q10_big.png}
+    \includegraphics[width=0.5\textheight]{./images/q10_big.png}
     \caption{Asservissement avec un petit gain (lambda=0.8)}
     \label{bigGain}
 \end{figure}
