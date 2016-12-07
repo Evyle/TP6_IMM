@@ -68,8 +68,8 @@ Avant de d\'emarrer la r\'edaction du code et les r\'eponses aux questions, nous
 \subsection{Question 1}
 Dans cette partie, nous allons appliquer les 6 degr\'es de libert\'e de la sonde, dans le but de simuler les mouvements du patient. Voici le code qui nous permet de r\'ealiser cela :
 \begin{verbatim}
-double ampliture_t = 0.020;
-double ampliture_r = 20.0;
+double ampliture_t = 0.005;
+double ampliture_r = 5.0;
 
 object_velocity[0] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
 object_velocity[1] = ampliture_t*sin(2*M_PI*(1.0/5.0)*time);
@@ -257,7 +257,7 @@ Avec un lambda = 0.4, l'asservissement visuel fonctionne. A chaque instant (it\'
 \subsection{Question 9}
 La region d'interet a beaucoup d'importance. Elle permet d'effectuer l'asservissement visuel correctement (ou non). Lorsque le ROI est grand, la loi de commande a peu de chance de se tromper de direction, parce le nombre de donn\'ees est tr\`es \'elev\'e. La minimisation de l'erreur fonctionne donc tr\`es bien (Figure \ref{largeRoi}). D\`es lors que le roi est r\'eduit, les pics de l'erreur sont plus \'elev\'es : 5.5x10-2 avec un ROI moyen contre 1.8x10-2 avec un grand ROI (figure \ref{mediumRoi}).
 \par
-Dans la m\^eme lign\'ee, l'erreur devient tr\`es forte lorsque le ROI est tr\`es petit (Figure \ref{smallRoi}). De plus, on constate m\^eme que dans ce cas l\`a, l'asservissement est imparfait : ça tremble. La r\'egion d'int\'er\^et \'etant tr\`es petite, les donn\'ees utiles pour l'asservissement sont pr\'esentes en petite quantit\'e, ce qui limite la pr\'ecision. Une r\'egion d'int\'er\^et de taille correcte est donc importante.
+Dans la m\^eme lign\'ee, l'erreur devient tr\`es forte lorsque le ROI est tr\`es petit (Figure \ref{smallRoi}). De plus, on constate m\^eme que dans ce cas l\`a, l'asservissement est imparfait : l'image tremble. La r\'egion d'int\'er\^et \'etant tr\`es petite, les donn\'ees utiles pour l'asservissement sont pr\'esentes en petite quantit\'e, ce qui limite la pr\'ecision. Une r\'egion d'int\'er\^et de taille correcte est donc importante.
 
 \begin{figure}[H]
     \centering
@@ -300,7 +300,7 @@ Le gain de contr\^ole maximum qui nous assure une compensation de mouvement corr
 \subsection{Question 11}
 Apr\`es l'acc\'el\'eration de l'amplitude du mouvement, on constate que l'asservissement visuel ne fonctionne plus. En effet, la vitesse (gain de contr\^ole) n'est plus du tout adapt\'ee au mouvement. Le plan de coupe se d\'esaxe rapidement et l'erreur explose. 
 \par
-Il est tr\`es difficle de trouver un gain de controle adapt\'e car, les oscillations ne sont pas de m\^eme taille selon les axes (de translation et de rotation). Un gain \'elev\'e entrainera une poursuite adapt\'ee sur un axe, mais trop trop rapide sur un autre.
+Il est tr\`es difficle de trouver un gain de controle adapt\'e car il est unique : les oscillations ne sont pas de m\^eme taille selon les axes (de translation et de rotation). Un gain \'elev\'e entrainera une poursuite adapt\'ee sur un axe, mais trop trop rapide sur un autre.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q11_0,4.png}
@@ -309,17 +309,85 @@ Il est tr\`es difficle de trouver un gain de controle adapt\'e car, les oscillat
 \end{figure}
 
 \subsection{Question 12}
-%TODO Expliquer le but de la question
+Pour am\'eliorer la compensation de mouvement, on peut ajouter un terme dans la loi de commande. Ce terme contient la somme des erreurs faites jusqu'\`a l'instant t, multipli\'ee par un facteur mu. Grace \`a ce terme, la compensation de mouvement sera plus pr\'ecise, car elle sera capable de corriger ses propres erreurs : plus elle fait une erreur \'elev\'ee, plus elle se d\'eplacera \`a la l'it\'eration suivante. Voici le code en question :
+
 \begin{verbatim}
-%Mettre le code ici
+// Facteur du gain integral des erreurs
+double opt_mu = 0.05;
+
+// Ajout de l'erreur courante
+sum_dedt += VisualFeatureError;
+
+// Ajout du terme \`a la loi de commande
+probe_velocity -= opt_mu * Ls.pseudoInverse() * sum_dedt;
 \end{verbatim}
-%TODO Commenter le code 
+
+
+En ajoutant ce terme avec mu=0.05, et en conservant le gain de controle lambda=0.4, l'asservissement fonctionne lors de mouvements très rapides (Figure \ref{q12_1}). De plus, m\^eme en diminuant le gain de contr\^ole lambda=0.1, la compensation de mouvement fonctionne toujours, gr\^ace \`a la compensation d'erreurs (Figure \ref{q12_2} par rapport \`a \ref{smallGain} ).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q12_0,05_0,4.png}
+    \caption{Asservissement $\mu = 0.05, \lambda = 0.4$ }
+    \label{q12_1}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q12_lambda=0,1.png}
+    \caption{Asservissement $\mu = 0.05, \lambda = 0.1$ }
+    \label{q12_2}
+\end{figure}
+
+D\`es lors que l'on r\'eduit le gain int\'egral, l'asservissement fonctionne moins bien (Figure \ref{q12_4}) ou plus du tout (Figure \ref{q12_3}). Dans notre cas, une bonne r\`egle d'ajustement entre $\mu$ et $\lambda$ est : $\lambda = 8*\mu$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q12_mu=0,01.png}
+    \caption{Asservissement $\mu = 0.01, \lambda = 0.4$ }
+    \label{q12_3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q12_mu=0,3.png}
+    \caption{Asservissement $\mu = 0.3, \lambda = 0.4$ }
+    \label{q12_4}
+\end{figure}
+
 
 \subsection{Question 13}
-%TODO
+
+Nous allons maintenant traiter le cas d'un positionnement automatique fixe. Le but est de se postionner correctement en fonction de l'image d\'esir\'ee. Cette image est fixe, puisqu'il n'y a pas de mouvement.
+\par
+Lors d'un d\'ecalage de 0.002 m\`etres (Figure \ref{q13_1} et \ref{q13_2}), le positionnement est correct et tr\`es rapide. On voit en effet la convergence de l'erreur.
+\par
+Mais lorsque le d\'ecalage est trop grand, le positionnement ne fonctionne plus (Figure \ref{q13_3} et \ref{q13_4}). Le d\'ecalage est tellement important qu'il n'arrive pas \`a retrouver le chemin pour converger vers le positionnement correct. On constate que l'erreur diverge et que le plan de coupe vascille dans tous les sens (Figure \ref{q13_4}).
+\par
+Cette approche (gain int\'egral) est plus adapt\'ee \`a la compensation de mouvement, puisque qu'elle prend en compte les erreurs pr\'ecedemment effectu\'ees, sur un mouvement tr\`es rapide.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q13_0,002_begin.png}
+    \caption{ Positionement 0.002 metres \`a l'initilisation }
+    \label{q13_1}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q13_0,002_end.png}
+    \caption{ Positionement 0.002 metres apres convergence }
+    \label{q13_2}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q13_0,008_begin.png}
+    \caption{ Positionement 0.008 metres \`a l'initilisation }
+    \label{q13_3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textheight]{./images/q13_0,008_end.png}
+    \caption{ Positionement 0.008 metres lors de la divergence }
+    \label{q13_4}
+\end{figure}
 
 \section{Conclusion}
-%TODO
+L'asservissement et le positionnement automatique sont des m\'ethodes utiles pour suivre un objet, atteindre une position d\'esir\'ee. Ce probl\`eme se traduit (comme bien d'autres d'ailleurs), comme un probl\`eme de minimisation. A chaque it\'eration, on d\'etermine la direction de d\'eplacement, pour la corriger. On d\'efinit donc une loi de commande, qui d\'epend de l'erreur la position actuelle et la position d\'esir\'ee. Il est tr\`es important que la r\'egion permettant de calculer cette erreur soit la plus grande possible, pour \^etre le plus pr\'ecis possible. On peut ajouter \`a cette loi de commande un terme se basant sur les toutes les erreurs d\'ej\`a commises, pour am\'eliorer la correction lors de forts mouvements multi-directionnels.
 
 \end{document}
 \grid
