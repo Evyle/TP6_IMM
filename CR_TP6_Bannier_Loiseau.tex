@@ -282,6 +282,8 @@ Dans la m\^eme lign\'ee, l'erreur devient tr\`es forte lorsque le ROI est tr\`es
 Lorsque le gain de contr\^ole est trop petit (lambda = 0.1), la cam\'era n'arrive \`a poursuivre l'objet en mouvement. Sa vitesse est trop faible par rapport au mouvement. L'erreur est donc \'elev\'ee en bout de l'oscillation, mais le re-postionnement est correct lorsque l'objet revient vers sa postion initiale (Figure \ref{smallGain}).
 \par
 A l'inverse, d\'efinir un gain de controle trop \'elev\'e entraine des vibrations : la cam\'era avance trop vite et se positionne incorrectement. R\'eguli\`erement, la cam\'era d\'epasse l'objet et est oblig\'ee de revenir sur ses pas. Cela provoque d'importants aller-retours visibles sur la figure \ref{bigGain}
+\par
+Le gain de contr\^ole maximum qui nous assure une compensation de mouvement correcte est lambda = 0.5.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q10_small.png}
@@ -296,10 +298,12 @@ A l'inverse, d\'efinir un gain de controle trop \'elev\'e entraine des vibration
 \end{figure}
 
 \subsection{Question 11}
-%TODO
+Apr\`es l'acc\'el\'eration de l'amplitude du mouvement, on constate que l'asservissement visuel ne fonctionne plus. En effet, la vitesse (gain de contr\^ole) n'est plus du tout adapt\'ee au mouvement. Le plan de coupe se d\'esaxe rapidement et l'erreur explose. 
+\par
+Il est tr\`es difficle de trouver un gain de controle adapt\'e car, les oscillations ne sont pas de m\^eme taille selon les axes (de translation et de rotation). Un gain \'elev\'e entrainera une poursuite adapt\'ee sur un axe, mais trop trop rapide sur un autre.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{./images/q11_0,4.png}
+    \includegraphics[width=0.5\textheight]{./images/q11_0,4.png}
     \caption{Asservissement avec mouvement rapide }
     \label{fastMove}
 \end{figure}
