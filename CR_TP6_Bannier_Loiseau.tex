@@ -55,14 +55,14 @@ Pour r\'ealiser cela nous allons utiliser un simulateur de sonde ultrasonore pos
 
 
 \section{Travail r\'ealis\'e}
-Avant de d\'emarrer la r\'edaction du code et les r\'eponses aux questions, nous avons lanc\'es l'outil de simulation r\'ealis\'e par l'\'equipe de l'INRIA. Cet outil ouvre plusieus fen\^etres qui sont les suivantes :
+Avant de d\'emarrer la r\'edaction du code et les r\'eponses aux questions, nous avons lanc\'e l'outil de simulation r\'ealis\'e par l'\'equipe de l'INRIA. Cet outil ouvre plusieurs fen\^etres qui sont les suivantes :
 \begin{itemize}
-\item L'image actualis\'e de l'ultrason. Cette image doit prendre en compte les battements simul\'es du coeur, et doit donc les compenser pour garder la zone d'int\'er\^et dans le champ de vision.
-\item L'image d\'esir\'e. Cette image n'est pas cens\'e bouger par la suite, elle montre la zone d'int\'er\^et s\'el\'ectionn\'e.
+\item L'image actualis\'ee provenant de la sonde ultrasonore. Cette image doit prendre en compte les battements du coeur (que nous avons simul\'es), et doit donc les compenser pour garder la zone d'int\'er\^et dans le champ de vision.
+\item L'image d\'esir\'ee. Cette image n'est pas cens\'e bouger par la suite, elle montre la zone d'int\'er\^et s\'el\'ectionn\'ee.
 \item L'image diff\'erence entre les deux pr\'ec\'edentes.
-\item Courbe de vitesse de d\'eplacement de la sonde (en translation et en rotation)
-\item Courbe d'erreur de position de la sonde (en translation et en rotation)
-\item Courbe d'erreur de la fonction de co\^ut. Cela repr\'esente l'erreur de la compensation par rapport au mouvement r\'eellement effectu\'e.
+\item Courbe de vitesse de d\'eplacement de la sonde (en translation et en rotation).
+\item Courbe d'erreur de position de la sonde (en translation et en rotation)/
+\item Courbe d'erreur repr\'esentant la fonction de co\^ut. Cela repr\'esente l'erreur de la compensation par rapport au mouvement r\'eellement effectu\'e.
 \end{itemize}
 
 \subsection{Question 1}
@@ -80,9 +80,9 @@ object_velocity[4] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
 object_velocity[5] = vpMath::rad(ampliture_r) * sin( 2*M_PI*(1.0/5.0)*time);
 \end{verbatim}
 
-Object\_velocity repr\'esente le mouvement de la sonde, et donc ses 6 degr\'es de libert\'e. Nous avons appliqu\'e ici une p\'eriode sinuso\"idale de 5 secondes pour une amplitude de 0.005 m\`etre/secondes, que l'on a transform\'e en rad/sec.\\
+object\_velocity repr\'esente le mouvement de la sonde, et donc ses 6 degr\'es de libert\'e. Nous avons appliqu\'e ici une p\'eriode sinuso\"idale de 5 secondes pour une amplitude de 0.005 m\`etres/secondes, que l'on a transform\'e en radian/secondes.\\
 
-Le r\'esultat que nous obtenons s'applique directement sur l'image actualis\'e de l'ultrason, ce qui modifie \'egalement l'image de diff\'erence, et la courbe d'erreur de pose de la sonde. Voici ce que nous observons :
+Le r\'esultat que nous obtenons s'applique directement sur l'image actualis\'ee de l'ultrason, ce qui modifie \'egalement l'image de diff\'erence, et la courbe d'erreur de pose de la sonde. Voici ce que nous observons :
 \begin{figure}[!h]
 	\centering
 		\includegraphics[width=1.0\textwidth]{./images/question1.png}
@@ -90,12 +90,12 @@ Le r\'esultat que nous obtenons s'applique directement sur l'image actualis\'e d
 	\label{mvtPatient}
 \end{figure}
 
-La Figure \ref{mvtPatient} montre l'\'etat du patient \`a un instant t. En effet, les mouvements sont continus, ce que nous montre bien la courbe. Nous observons sur cette Figure \ref{mvtPatient} une diff\'erence assez \'elev\'e entre l'image actuelle du mouvement du patient, et l'image d\'esir\'ee, c'est \`a dire l'image initiale. Cela est normal, car aucune compensation automatique n'est r\'ealis\'e pour le moment, il y a seulement le battement de c\oe ur qui est simul\'e. Ce battement de c\oe ur simul\'e par ailleurs n'est pas vraiment r\'ealiste car sa mani\'ere de bouger est r\'ealis\'e par des sinus, ce qui donne un r\'esultat tr\`es peu naturel. Nous obtenons ainsi une erreur identique entre la rotation et la translation, et cela est normal puisque rien n'est compens\'e ou m\^eme appris.
-Dans cette simulation, la zone d'int\'er\^et a peu d'importance puisque nous l'avons dit, aucun mouvement n'est actuellement compens\'e en fonction de cette zone, seulement la simualtion des battements du c\oe ur est effectu\'e.
+La Figure \ref{mvtPatient} montre l'\'etat du patient \`a un instant t. En effet, les mouvements sont continus, ce que nous montre bien la courbe. Nous observons sur cette Figure \ref{mvtPatient} une diff\'erence assez \'elev\'ee entre l'image actuelle du mouvement du patient, et l'image d\'esir\'ee, c'est \`a dire l'image initiale. Cela est normal, car aucune compensation automatique n'est r\'ealis\'ee pour le moment, il y a seulement les battements du c\oe ur qui sont simul\'es. Ces battements de c\oe ur simul\'es ne sont pas vraiment r\'ealistes car ils sont r\'ealis\'es par des sinus, ce qui donne un r\'esultat tr\`es peu naturel. Nous obtenons ainsi une erreur identique entre la rotation et la translation, et cela est normal puisque rien n'est compens\'e ou m\^eme appris.
+Dans cette simulation, la zone d'int\'er\^et a peu d'importance puisque nous l'avons dit, aucun mouvement n'est actuellement compens\'e en fonction de cette zone, seulement la simulation des battements du c\oe ur est effectu\'ee.
 
 
 \subsection{Question 2}
-Nous souhaitons d\'esormais r\'ecup\'erer et sauvegarder le contenu de la zone d'int\'er\^et initiale. Pour cela, nous allons r\'ecup\'erer le contenu de la zone dans l'image d\'esir\'ee, et donc copier l'intensit\'e des pixels de la zone concern\'ee. Ainsi, malgr\'e les mouvements du c\oe ur, la zone d'int\'er\^et est sauvegard\'e d\'es l'initialisation et va ainsi pouvoir \^etre compar\'e \`a la zone correspondante dans l'image actualis\'e de la sonde.\\
+Nous souhaitons d\'esormais r\'ecup\'erer et sauvegarder le contenu de la zone d'int\'er\^et initiale. Pour cela, nous allons r\'ecup\'erer le contenu de la zone dans l'image d\'esir\'ee, et donc copier l'intensit\'e des pixels de la zone concern\'ee. Ainsi, malgr\'e les mouvements du c\oe ur, la zone d'int\'er\^et est sauvegard\'ee d\`es l'initialisation et va ainsi pouvoir \^etre compar\'e \`a la zone correspondante dans l'image actualis\'ee de la sonde.\\
 
 Voici notre code permettant cela :
 \begin{verbatim}
@@ -107,10 +107,11 @@ for(int i=0; i<ROI_height; i++)
     }
 }
 \end{verbatim}
+
 Pour chaque pixel appartenant \`a cette zone d'int\'er\^et, nous r\'ecup\'erons son intensit\'e.
 
 \subsection{Question 3}
-Nous souhaitons d\'esormais calculer la matrice d'int\'eraction, et pour cela calculer le gradient 3d de l'image. Pour le calculer, nous devons appliquer 9 patchs au total, 3 par coordonn\'ees (x, y ou z), puis un patch par image : l'image courant, l'image pr\'ec\'edente et l'image suivante. \\
+Nous souhaitons d\'esormais calculer la matrice d'int\'eraction et, pour cela, calculer le gradient 3D de l'image. Pour le calculer, nous devons appliquer 9 patchs au total, 3 par coordonn\'ees (x, y ou z), puis un patch par image : l'image courante, l'image pr\'ec\'edente et l'image suivante. \\
 
 Voici notre code permettant cela :
 \begin{verbatim}
@@ -149,8 +150,9 @@ for(int i=Hmin; i<Hmax; i++)
 }
 \end{verbatim}
 
-La premi\`ere chose \`a noter est que nous calculons ce gradient 3D uniquement sur la zone d'int\'er\^et car cela nous permet de gagner en temps de calcul sachant que ce calcul ne sera utile par la suite que dans cette zone l\`a. C'est donc \'eviter du temps de calcul inutile. \\
-Le second point \`a voir sur ce code est que pour appliquer le patch sur une image, nous avons pr\'ef\'er\'e cr\'eer une m\'ethode \`a part. Cela nous permet d'avoir une meilleure visibilit\'e sur notre code concernant cette fonction de calcul du gradient 3D de l'image. En effet, comme il y a 9 patchs \`a appliquer, ce qui correspond \`a 9 fois le m\^eme traitement sur des donn\'ees diff\'erentes, il nous a paru logique de r\'ealiser ce traitement dans une nouvelle fonction. Cette fonction est la suivante :
+La premi\`ere chose \`a noter est que nous calculons ce gradient 3D uniquement sur la zone d'int\'er\^et car cela nous permet de gagner en temps de calcul sachant que ce calcul ne sera utile par la suite que dans cette zone l\`a. C'est donc \'eviter du temps de calcul inutile.\\
+
+Le second point \`a voir sur ce code est que, pour appliquer le patch sur une image, nous avons pr\'ef\'er\'e cr\'eer une m\'ethode \`a part. Cela nous permet d'avoir une meilleure visibilit\'e sur notre code concernant cette fonction de calcul du gradient 3D de l'image. En effet, comme il y a 9 patchs \`a appliquer, ce qui correspond \`a 9 fois le m\^eme traitement sur des donn\'ees diff\'erentes, il nous a paru logique de r\'ealiser ce traitement dans une nouvelle fonction. Cette fonction est la suivante :
 
 \begin{verbatim}
 /**
@@ -180,12 +182,12 @@ vpImage<unsigned char> &img, int & i, int & j)
     return result;
 }
 \end{verbatim}
+
 Cette fonction effectue un parcours du patch (une matrice 3x3), et calcule la nouvelle valeur au point (i,j) de l'image. Maintenant que notre gradient 3D est calcul\'e, nous allons pouvoir impl\'ementer la matrice d'int\'eraction.
 
 \subsection{Question 4}
-La matrice d'int\'eraction repr\'esente les variations d'intensit\'e des pixels par rapport au d\'eplacement de la sonde. C'est \`a dire comment \'evolue l'image, et donc l'intensit\'e de ses pixels, en fonction du mouvement de la sonde. C'est donc cette matrice qui va \^etre \`a la base de la compensation de mouvement? \\
+La matrice d'int\'eraction repr\'esente les variations d'intensit\'e des pixels par rapport au d\'eplacement de la sonde. C'est \`a dire comment \'evolue l'image, et donc l'intensit\'e de ses pixels, en fonction du mouvement de la sonde. C'est donc cette matrice qui va \^etre \`a la base de la compensation de mouvement. Voici comment nous calculons cette matrice d'int\'eraction :
 
-Voici notre code calculant cette matrice d'int\'eraction :
 \begin{verbatim}
 int k=0;
 for(int i=0;i<ROIH; i++) 
@@ -206,10 +208,12 @@ for(int i=0;i<ROIH; i++)
     }
 }
 \end{verbatim}
-Le code ci-dessus est la mise en application des formules math\'ematiques vues en cours, et rappel\'ees dans le sujet de TP. Comme pour le gradient 3D, nous calculons la matrice d'int\'eraction uniquement sur la zone d'int\'er\^et, car c'est le seul endroit o\`u nous allons v\'erifier la r\'eaction de la sonde par rapport aux battements de c\oe ur. Le calcul sur toute l'image n'aurait donc pas d'int\'er\^et et ferait perdre du temps de calcul, or la sonde doit \^etre capable de se d\'eplacer en temps r\'eel. 
+
+Le code ci-dessus est la mise en application des formules math\'ematiques vues en cours, et rappel\'ees dans le sujet de TP. Comme pour le gradient 3D, nous calculons la matrice d'int\'eraction uniquement sur la zone d'int\'er\^et, car c'est le seul endroit o\`u nous allons v\'erifier la r\'eaction de la sonde par rapport aux battements du c\oe ur. Le calcul sur toute l'image n'aurait donc pas d'int\'er\^et et ferait perdre du temps de calcul, or la sonde doit \^etre capable de se d\'eplacer en temps r\'eel. 
 
 \subsection{Question 5}
 Nous souhaitons d\'esormais r\'ecup\'erer le contenu de la zone d'int\'er\^et en fonction du mouvement de la sonde. Comme pour la question 2, nous allons sauvegarder l'intensit\'e des pixels de cette zone. Cela nous permettra donc de pouvoir les comparer et rectifier le mouvement de la sonde. Voici donc le code nous permettant cela :
+
 \begin{verbatim}
 for(int i=0; i<ROI_height; i++) 
 {
@@ -219,14 +223,14 @@ for(int i=0; i<ROI_height; i++)
     }
 }
 \end{verbatim}
+
 Il s'agit du m\^eme code que pour la question 2, \`a ceci pr\`es que nous n'enregistrons pas l'information dans la m\^eme variable, et que ce code est r\'ealis\'e \`a chaque actualisation de l'image. Mais concr\`etement le but recherch\'e reste identique, c'est pourquoi nous avons r\'eutilis\'e ce code.
 
 \subsection{Question 6}
-Nous souhaitons d\'esormais bouger la sonde de sorte \`a compenser les battements du c\oe ur. Pour cela nous allons utiliser la matrice d'int\'eraction que nous venons de calculer, car elle nous donne des informations tr\`es int\'eressantes sur la variation des pixels en fonction des battements du c\oe ur. Nous calculons ce mouvment \`a effectuer gr\^ace \`a une formule math\'ematiques du cours.\\
+Nous souhaitons d\'esormais bouger la sonde de sorte \`a compenser les battements du c\oe ur. Pour cela nous allons utiliser la matrice d'int\'eraction que nous venons de calculer, car elle nous donne des informations tr\`es int\'eressantes sur la variation des pixels en fonction des battements du c\oe ur. Nous calculons le mouvement que la sonde doit effectuer gr\^ace \`a une formule math\'ematiques du cours. Voici le r\'esultat : 
 
-Voici le r\'esultat : 
 \begin{verbatim}
-double lambda = 0.1;
+double lambda = 0.4;
 vpColVector VisualFeatureError;
 
  // Compute the visual feature error
@@ -235,14 +239,16 @@ VisualFeatureError = CurrentFeatures - DesiredFeatures;
 // Compute the probe velocity
 probe_velocity = -lambda*Ls.pseudoInverse()*VisualFeatureError; 
 \end{verbatim}
-%TODO Commenter le code 
+
+probe\_velocity correspond au mouvement associ\'e \`a la sonde, en faisant le calcul de la matrice d'int\'eraction et de l'erreur visuelle entre l'image actuelle et celle d\'esir\'ee, nous obtenons le d\'eplacement n\'ecessaire pour que la sonde puisse compenser les mouvements de battement du c\oe ur.
 
 \subsection{Question 7}
 Avant de pouvoir analyser les r\'esultats, nous souhaitons impl\'ementer une fonction de co\^ut visuel correspondant aux erreurs des intensit\'es de pixels de la zone d'int\'er\^et de l'image actualis\'ee par rapport \`a l'image d\'esir\'ee. Voici cette fonction de co\^ut : 
 \begin{verbatim}
 cost = VisualFeatureError.euclideanNorm() / nbPx;
 \end{verbatim}
-%TODO Commenter le code 
+
+Cette fonction de co\^ut est celle qui va nous permettre de comparer l'efficacit\'e des diff\'erents tests que nous allons r\'ealiser par la suite. 
 
 \subsection{Question 8}
 Avec un lambda = 0.4, l'asservissement visuel fonctionne. A chaque instant (it\'eration de la boucle), la cam\'era se re-positionne pour suivre le mouvement de l'objet. L'erreur ne d\'epasse jamais 0.02, ce qui est tr\`es performant (Figure \ref{assertVisu}). Cela se voit dans la fen\^etre 'Image Difference' : les erreurs sont tr\`es faibles et \`a peine visibles. L'erreur (affich\'ee en bas \`a droite de la Figure \ref{assertVisu}) varie en fonction des oscillations de l'objet. Plus le mouvement est rapide, plus l'erreur augmente.
@@ -255,33 +261,33 @@ Avec un lambda = 0.4, l'asservissement visuel fonctionne. A chaque instant (it\'
 
 
 \subsection{Question 9}
-La region d'interet a beaucoup d'importance. Elle permet d'effectuer l'asservissement visuel correctement (ou non). Lorsque le ROI est grand, la loi de commande a peu de chance de se tromper de direction, parce le nombre de donn\'ees est tr\`es \'elev\'e. La minimisation de l'erreur fonctionne donc tr\`es bien (Figure \ref{largeRoi}). D\`es lors que le roi est r\'eduit, les pics de l'erreur sont plus \'elev\'es : 5.5x10-2 avec un ROI moyen contre 1.8x10-2 avec un grand ROI (figure \ref{mediumRoi}).
+La region d'int\'er\^et a beaucoup d'importance. Elle permet d'effectuer l'asservissement visuel correctement (ou non). Lorsque cette zone d'int\'er\^et est grande, la loi de commande a peu de chance de se tromper de direction, parce le nombre de donn\'ees est tr\`es \'elev\'e. La minimisation de l'erreur fonctionne donc tr\`es bien (Figure \ref{largeRoi}). D\`es lors que la zone est r\'eduite, les pics de l'erreur sont plus \'elev\'es : 5.5x10-2 avec une zone de taille moyenne contre 1.8x10-2 avec une zone de grande taille (Figure \ref{mediumRoi}).
 \par
-Dans la m\^eme lign\'ee, l'erreur devient tr\`es forte lorsque le ROI est tr\`es petit (Figure \ref{smallRoi}). De plus, on constate m\^eme que dans ce cas l\`a, l'asservissement est imparfait : l'image tremble. La r\'egion d'int\'er\^et \'etant tr\`es petite, les donn\'ees utiles pour l'asservissement sont pr\'esentes en petite quantit\'e, ce qui limite la pr\'ecision. Une r\'egion d'int\'er\^et de taille correcte est donc importante.
+Dans la m\^eme lign\'ee, l'erreur devient tr\`es forte lorsque la taille de la zone d'int\'er\^et est tr\`es petite (Figure \ref{smallRoi}). De plus, on constate m\^eme que dans ce cas l\`a, l'asservissement est imparfait : l'image tremble. La r\'egion d'int\'er\^et \'etant tr\`es petite, les donn\'ees utiles pour l'asservissement sont pr\'esentes en petite quantit\'e, ce qui limite la pr\'ecision. Une r\'egion d'int\'er\^et de taille correcte est donc importante.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q9_large.png}
-    \caption{Asservissement avec un grand ROI}
+    \caption{Asservissement avec une grande r\'egion d'int\'er\^et}
     \label{largeRoi}
 \end{figure}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q9_medium.png}
-    \caption{Asservissement avec un ROI moyen}
+    \caption{Asservissement avec une moyenne r\'egion d'int\'er\^et}
     \label{mediumRoi}
 \end{figure}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q9_small.png}
-    \caption{Asservissement avec un petit ROI}
+    \caption{Asservissement avec une petite r\'egion d'int\'er\^et}
     \label{smallRoi}
 \end{figure}
 
 \subsection{Question 10}
 Lorsque le gain de contr\^ole est trop petit (lambda = 0.1), la cam\'era n'arrive \`a poursuivre l'objet en mouvement. Sa vitesse est trop faible par rapport au mouvement. L'erreur est donc \'elev\'ee en bout de l'oscillation, mais le re-postionnement est correct lorsque l'objet revient vers sa postion initiale (Figure \ref{smallGain}).
 \par
-A l'inverse, d\'efinir un gain de controle trop \'elev\'e entraine des vibrations : la cam\'era avance trop vite et se positionne incorrectement. R\'eguli\`erement, la cam\'era d\'epasse l'objet et est oblig\'ee de revenir sur ses pas. Cela provoque d'importants aller-retours visibles sur la figure \ref{bigGain}
+A l'inverse, d\'efinir un gain de controle trop \'elev\'e entraine des vibrations : la cam\'era avance trop vite et se positionne incorrectement. R\'eguli\`erement, la cam\'era d\'epasse l'objet et est oblig\'ee de revenir sur ses pas. Cela provoque d'importants aller-retours visibles sur la Figure \ref{bigGain}.
 \par
 Le gain de contr\^ole maximum qui nous assure une compensation de mouvement correcte est lambda = 0.5.
 \begin{figure}[H]
@@ -323,7 +329,7 @@ probe_velocity -= opt_mu * Ls.pseudoInverse() * sum_dedt;
 \end{verbatim}
 
 
-En ajoutant ce terme avec mu=0.05, et en conservant le gain de controle lambda=0.4, l'asservissement fonctionne lors de mouvements très rapides (Figure \ref{q12_1}). De plus, m\^eme en diminuant le gain de contr\^ole lambda=0.1, la compensation de mouvement fonctionne toujours, gr\^ace \`a la compensation d'erreurs (Figure \ref{q12_2} par rapport \`a \ref{smallGain} ).
+En ajoutant ce terme avec mu=0.05, et en conservant le gain de controle lambda=0.4, l'asservissement fonctionne lors de mouvements tr\`es rapides (Figure \ref{q12_1}). De plus, m\^eme en diminuant le gain de contr\^ole lambda=0.1, la compensation de mouvement fonctionne toujours, gr\^ace \`a la compensation d'erreurs (Figure \ref{q12_2} par rapport \`a la Figure \ref{smallGain} ).
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q12_0,05_0,4.png}
@@ -364,25 +370,25 @@ Cette approche (gain int\'egral) est plus adapt\'ee \`a la compensation de mouve
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q13_0,002_begin.png}
-    \caption{ Positionement 0.002 metres \`a l'initilisation }
+    \caption{ Positionement 0.002 m\`etres \`a l'initilisation }
     \label{q13_1}
 \end{figure}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q13_0,002_end.png}
-    \caption{ Positionement 0.002 metres apres convergence }
+    \caption{ Positionement 0.002 m\`etres apres convergence }
     \label{q13_2}
 \end{figure}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q13_0,008_begin.png}
-    \caption{ Positionement 0.008 metres \`a l'initilisation }
+    \caption{ Positionement 0.008 m\`etres \`a l'initilisation }
     \label{q13_3}
 \end{figure}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textheight]{./images/q13_0,008_end.png}
-    \caption{ Positionement 0.008 metres lors de la divergence }
+    \caption{ Positionement 0.008 m\`etres lors de la divergence }
     \label{q13_4}
 \end{figure}
 
@@ -390,5 +396,6 @@ Cette approche (gain int\'egral) est plus adapt\'ee \`a la compensation de mouve
 L'asservissement et le positionnement automatique sont des m\'ethodes utiles pour suivre un objet, atteindre une position d\'esir\'ee. Ce probl\`eme se traduit (comme bien d'autres d'ailleurs), comme un probl\`eme de minimisation. A chaque it\'eration, on d\'etermine la direction de d\'eplacement, pour la corriger. On d\'efinit donc une loi de commande, qui d\'epend de l'erreur la position actuelle et la position d\'esir\'ee. Il est tr\`es important que la r\'egion permettant de calculer cette erreur soit la plus grande possible, pour \^etre le plus pr\'ecis possible. On peut ajouter \`a cette loi de commande un terme se basant sur les toutes les erreurs d\'ej\`a commises, pour am\'eliorer la correction lors de forts mouvements multi-directionnels.
 
 \end{document}
+\grid
 \grid
 \grid

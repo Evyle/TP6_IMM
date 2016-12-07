@@ -349,7 +349,7 @@ int main()
             // Question 6
             // Compute the control law that provides the velocity to apply to the probe
 
-            double lambda = 0.1;
+            double lambda = 0.5;
             vpColVector VisualFeatureError;
             VisualFeatureError = CurrentFeatures - DesiredFeatures; // Compute the visual feature error
             probe_velocity = -lambda*Ls.pseudoInverse()*VisualFeatureError; // Compute the probe velocity
