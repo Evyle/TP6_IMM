@@ -96,8 +96,8 @@ Dans cette simulation, la zone d'int\'er\^et a peu d'importance puisque nous l'a
 %TODO Expliquer le but de la question
 \begin{verbatim}
 for(int i=0; i<ROI_height; i++) {
-	for(int j=0; j<ROI_width; j++) {
-		DesiredFeatures[i*ROI_width+j] = simulator->Image(i+Hmin, j+Wmin);
+    for(int j=0; j<ROI_width; j++) {
+        DesiredFeatures[i*ROI_width+j] = simulator->Image(i+Hmin, j+Wmin);
 }
 \end{verbatim}
 %TODO Commenter le code si nécessaire
@@ -224,24 +224,25 @@ Avec un lambda = 0.4, l'asservissement visuel fonctionne. A chaque instant (it\'
 
 
 \subsection{Question 9}
-%TODO
+La region d'interet a beaucoup d'importance. Elle permet d'effectuer l'asservissement visuel correctement (ou non). Lorsque le ROI est grand, la loi de commande a peu de chance de se tromper de direction, parce le nombre de donn\'ees est tr\`es \'elev\'e. La minimisation de l'erreur fonctionne donc tr\`es bien (Figure \ref{largeRoi}). D\`es lors que le roi est r\'eduit, les pics de l'erreur sont plus \'elev\'es : 5.5x10-2 avec un ROI moyen contre 1.8x10-2 avec un grand ROI (figure \ref{mediumRoi}).
+\par
+Dans la m\^eme lign\'ee, l'erreur devient tr\`es forte lorsque le ROI est tr\`es petit (Figure \ref{smallRoi}). De plus, on constate m\^eme que dans ce cas l\`a, l'asservissement est imparfait : ça tremble. La r\'egion d'int\'er\^et \'etant tr\`es petite, les donn\'ees utiles pour l'asservissement sont pr\'esentes en petite quantit\'e, ce qui limite la pr\'ecision. Une r\'egion d'int\'er\^et de taille correcte est donc importante.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{./images/q9_large.png}
+    \includegraphics[width=0.5\textheight]{./images/q9_large.png}
     \caption{Asservissement avec un grand ROI}
     \label{largeRoi}
 \end{figure}
-
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{./images/q9_medium.png}
+    \includegraphics[width=0.5\textheight]{./images/q9_medium.png}
     \caption{Asservissement avec un ROI moyen}
     \label{mediumRoi}
 \end{figure}
-
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{./images/q9_small.png}
+    \includegraphics[width=0.5\textheight]{./images/q9_small.png}
     \caption{Asservissement avec un petit ROI}
     \label{smallRoi}
 \end{figure}
